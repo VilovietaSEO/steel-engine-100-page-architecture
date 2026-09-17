@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Steel Engine — 100 Page Architecture</title>
+  <meta name="description" content="A working inventory of 100 Steel Engine page designations, routes, and outcome-led H1 directions.">
+  <style>
+    :root { color-scheme: light; --ink:#17211b; --muted:#607067; --line:#dce3de; --paper:#f6f8f6; --white:#fff; --accent:#16a46b; --soft:#eaf8f1; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:15px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body.menu-open { overflow:hidden; }
+    button { font:inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline:3px solid rgba(22,164,107,.28); outline-offset:3px; }
+    .site-header { position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(220,227,222,.92); background:rgba(255,255,255,.94); box-shadow:0 1px 0 rgba(23,33,27,.02); backdrop-filter:blur(16px); }
+    .nav-shell { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:28px; width:min(1440px, 100%); min-height:72px; margin:auto; padding:0 28px; }
+    .brand { display:inline-flex; align-items:center; gap:10px; border:0; background:transparent; color:var(--ink); padding:8px 0; cursor:pointer; font-weight:820; letter-spacing:-.025em; }
+    .brand-mark { display:grid; place-items:center; width:31px; height:31px; border-radius:9px; background:var(--ink); color:var(--white); font-size:11px; letter-spacing:-.03em; }
+    .brand-word { font-size:17px; white-space:nowrap; }
+    .desktop-nav { display:flex; align-items:center; justify-content:center; gap:2px; min-width:0; }
+    .nav-trigger, .nav-direct { display:inline-flex; align-items:center; gap:6px; min-height:42px; padding:0 11px; border:0; border-radius:9px; background:transparent; color:#344239; cursor:pointer; font-size:14px; font-weight:680; white-space:nowrap; }
+    .nav-trigger:hover, .nav-trigger[aria-expanded="true"], .nav-direct:hover { background:#f0f4f1; color:var(--ink); }
+    .chevron { width:13px; height:13px; transition:transform .18s ease; }
+    .nav-trigger[aria-expanded="true"] .chevron { transform:rotate(180deg); }
+    .nav-actions { display:flex; align-items:center; gap:8px; }
+    .action-button { min-height:42px; padding:0 15px; border:1px solid transparent; border-radius:10px; background:transparent; color:var(--ink); cursor:pointer; font-size:14px; font-weight:760; white-space:nowrap; }
+    .action-button:hover { background:#f0f4f1; }
+    .action-button.primary { border-color:var(--ink); background:var(--ink); color:var(--white); box-shadow:0 5px 14px rgba(23,33,27,.13); }
+    .action-button.primary:hover { background:#26352c; }
+    .mobile-toggle { display:none; width:44px; height:44px; place-items:center; border:1px solid var(--line); border-radius:11px; background:var(--white); color:var(--ink); cursor:pointer; }
+    .mobile-toggle svg { width:20px; height:20px; }
+    .mega-panel { position:absolute; top:calc(100% + 10px); left:50%; width:min(1320px, calc(100vw - 32px)); transform:translateX(-50%); border:1px solid var(--line); border-radius:18px; background:var(--white); box-shadow:0 24px 70px rgba(23,33,27,.16); overflow:hidden; }
+    .mega-panel[hidden] { display:none; }
+    .mega-header { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; padding:22px 24px 18px; border-bottom:1px solid var(--line); background:linear-gradient(135deg,#f8fbf9,#eef8f3); }
+    .mega-kicker { margin:0 0 4px; color:#087c4e; font-size:11px; font-weight:850; letter-spacing:.12em; text-transform:uppercase; }
+    .mega-title { margin:0; font-size:21px; line-height:1.2; letter-spacing:-.03em; }
+    .mega-note { max-width:480px; margin:0; color:var(--muted); font-size:13px; text-align:right; }
+    .mega-grid { display:grid; grid-template-columns:repeat(var(--menu-columns,4),minmax(0,1fr)); gap:0; padding:10px 12px 14px; }
+    .mega-section { padding:12px; border-right:1px solid #edf1ee; }
+    .mega-section:last-child { border-right:0; }
+    .mega-section-title { margin:0 0 8px; padding:0 9px; color:#708077; font-size:11px; font-weight:850; letter-spacing:.09em; text-transform:uppercase; }
+    .menu-item { display:block; width:100%; min-height:39px; padding:9px; border:0; border-radius:9px; background:transparent; color:var(--ink); cursor:pointer; text-align:left; font-size:13px; font-weight:650; line-height:1.25; }
+    .menu-item:hover, .menu-item:focus-visible { background:var(--soft); color:#086f47; }
+    .mega-footer { display:flex; align-items:center; gap:4px; padding:11px 15px; border-top:1px solid var(--line); background:#fbfcfb; overflow-x:auto; }
+    .mega-footer .menu-item { width:auto; min-width:max-content; color:#435248; }
+    .mega-footer-label { margin-right:6px; padding:0 8px; color:#87938b; font-size:10px; font-weight:850; letter-spacing:.09em; text-transform:uppercase; white-space:nowrap; }
+    .mobile-backdrop, .mobile-drawer { display:none; }
+    .demo-toast { position:fixed; right:22px; bottom:22px; z-index:80; max-width:min(400px,calc(100vw - 32px)); padding:13px 16px; border:1px solid #cce7d9; border-radius:12px; background:#123d2c; color:#fff; box-shadow:0 16px 40px rgba(23,33,27,.2); opacity:0; transform:translateY(10px); pointer-events:none; transition:opacity .18s ease,transform .18s ease; font-size:13px; }
+    .demo-toast.is-visible { opacity:1; transform:translateY(0); }
+    main { width:min(1440px, 100%); margin:auto; padding:56px 28px 80px; }
+    .hero { max-width:900px; margin-bottom:32px; }
+    .eyebrow { margin:0 0 12px; color:#087c4e; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { margin:0; max-width:820px; font-size:clamp(38px, 6vw, 74px); line-height:.98; letter-spacing:-.055em; }
+    .intro { max-width:760px; margin:22px 0 0; color:var(--muted); font-size:18px; }
+    .toolbar { display:flex; gap:12px; align-items:center; margin:30px 0 18px; }
+    input { width:min(460px, 100%); padding:13px 15px; border:1px solid var(--line); border-radius:12px; background:var(--white); color:var(--ink); font:inherit; outline:none; }
+    input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(22,164,107,.14); }
+    .count { color:var(--muted); white-space:nowrap; }
+    .folder-index { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 32px; }
+    .folder-link { padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:var(--white); color:var(--ink); text-decoration:none; font:13px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .folder-link:hover { border-color:var(--accent); }
+    .folder { margin:0 0 36px; scroll-margin-top:20px; }
+    .folder-heading { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin:0 0 10px; }
+    .folder-heading h2 { margin:0; font:700 20px/1.25 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:-.025em; }
+    .folder-total { color:var(--muted); font-size:13px; }
+    .table-wrap { overflow:hidden; border:1px solid var(--line); border-radius:12px; background:var(--white); }
+    table { width:100%; border-collapse:collapse; }
+    th { position:sticky; top:0; z-index:1; padding:15px 18px; background:#edf2ee; text-align:left; font-size:12px; letter-spacing:.07em; text-transform:uppercase; }
+    td { padding:17px 18px; border-top:1px solid var(--line); vertical-align:top; }
+    tbody tr:hover { background:#fbfdfb; }
+    .num { width:54px; color:#8a968e; font-variant-numeric:tabular-nums; }
+    .status { width:150px; }
+    .tag { display:inline-block; padding:4px 8px; border-radius:999px; background:var(--soft); color:#087c4e; font-size:11px; font-weight:800; white-space:nowrap; }
+    .designation { width:230px; font-weight:750; }
+    .route { width:290px; }
+    code { display:inline-block; padding:4px 8px; border-radius:8px; background:#edf0ee; color:#344239; font:13px/1.35 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap:anywhere; }
+    footer { margin-top:24px; color:var(--muted); font-size:13px; }
+    @media (max-width:1024px) {
+      .desktop-nav, .nav-actions { display:none; }
+      .nav-shell { grid-template-columns:1fr auto; min-height:64px; padding:0 18px; }
+      .mobile-toggle { display:grid; }
+      .mega-panel { display:none !important; }
+      .mobile-backdrop { display:block; position:fixed; inset:0; z-index:60; background:rgba(10,18,13,.48); opacity:0; pointer-events:none; transition:opacity .2s ease; }
+      .mobile-backdrop.is-open { opacity:1; pointer-events:auto; }
+      .mobile-drawer { display:flex; position:fixed; top:0; right:0; z-index:70; flex-direction:column; width:min(440px,100%); height:100dvh; border-left:1px solid var(--line); background:var(--white); box-shadow:-18px 0 60px rgba(23,33,27,.2); transform:translateX(102%); visibility:hidden; transition:transform .24s ease,visibility 0s linear .24s; }
+      .mobile-drawer.is-open { transform:translateX(0); visibility:visible; transition-delay:0s; }
+      .mobile-drawer-head { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:64px; padding:0 18px; border-bottom:1px solid var(--line); }
+      .mobile-drawer-title { margin:0; font-size:16px; letter-spacing:-.02em; }
+      .mobile-close { display:grid; place-items:center; width:42px; height:42px; border:1px solid var(--line); border-radius:10px; background:var(--white); color:var(--ink); cursor:pointer; font-size:23px; line-height:1; }
+      .mobile-scroll { flex:1; overflow-y:auto; overscroll-behavior:contain; padding:10px 14px 22px; }
+      .mobile-demo-note { margin:0 4px 12px; padding:12px 13px; border-radius:10px; background:var(--soft); color:#256247; font-size:12px; }
+      .mobile-accordion { border-bottom:1px solid var(--line); }
+      .mobile-accordion-trigger, .mobile-direct { display:flex; align-items:center; justify-content:space-between; width:100%; min-height:54px; padding:0 8px; border:0; background:transparent; color:var(--ink); cursor:pointer; text-align:left; font-weight:760; }
+      .mobile-accordion-trigger .chevron { width:15px; height:15px; }
+      .mobile-accordion-trigger[aria-expanded="true"] .chevron { transform:rotate(180deg); }
+      .mobile-accordion-panel { padding:0 0 12px; }
+      .mobile-accordion-panel[hidden] { display:none; }
+      .mobile-section-title { margin:14px 8px 6px; color:#718078; font-size:10px; font-weight:850; letter-spacing:.1em; text-transform:uppercase; }
+      .mobile-menu-item { display:block; width:100%; min-height:44px; padding:11px 13px; border:0; border-radius:9px; background:transparent; color:#344239; cursor:pointer; text-align:left; font-size:14px; font-weight:620; }
+      .mobile-menu-item:hover, .mobile-menu-item:focus-visible { background:var(--soft); color:#086f47; }
+      .mobile-footer-actions { display:grid; grid-template-columns:1fr 1fr; gap:9px; padding:14px 18px max(14px,env(safe-area-inset-bottom)); border-top:1px solid var(--line); background:#fbfcfb; }
+      .mobile-footer-actions .action-button { border-color:var(--line); background:var(--white); }
+      .mobile-footer-actions .primary { border-color:var(--ink); background:var(--ink); }
+    }
+    @media (max-width:760px) {
+      main { padding:34px 16px 60px; }
+      .toolbar { align-items:stretch; flex-direction:column; }
+      .folder { margin-bottom:30px; }
+      .table-wrap { border:0; background:transparent; overflow:visible; }
+      table, tbody { display:block; }
+      thead { display:none; }
+      tr { display:grid; grid-template-columns:36px 1fr; gap:8px 10px; margin-bottom:10px; padding:14px; border:1px solid var(--line); border-radius:10px; background:var(--white); }
+      td { padding:0; border:0; }
+      .num { grid-row:1 / span 4; width:auto; }
+      .status,.designation,.route { width:auto; }
+      .status { grid-column:2; }
+      .h1dir::before { content:"H1: "; color:var(--muted); font-weight:700; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *, *::before, *::after { scroll-behavior:auto !important; transition-duration:.001ms !important; animation-duration:.001ms !important; animation-iteration-count:1 !important; }
+    }
+  </style>
+</head>
+<body>
+<header class="site-header" id="site-header">
+  <div class="nav-shell">
+    <button class="brand demo-action" type="button" data-demo-label="Steel Engine home" aria-label="Steel Engine home, demonstration only">
+      <span class="brand-mark" aria-hidden="true">SE</span>
+      <span class="brand-word">Steel Engine</span>
+    </button>
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <button class="nav-trigger" type="button" data-menu="platform" aria-expanded="false" aria-haspopup="true" aria-controls="desktop-mega-menu">Platform <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="nav-trigger" type="button" data-menu="solutions" aria-expanded="false" aria-haspopup="true" aria-controls="desktop-mega-menu">Solutions <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="nav-trigger" type="button" data-menu="industries" aria-expanded="false" aria-haspopup="true" aria-controls="desktop-mega-menu">Industries <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="nav-direct demo-action" type="button" data-demo-label="Security">Security</button>
+      <button class="nav-trigger" type="button" data-menu="resources" aria-expanded="false" aria-haspopup="true" aria-controls="desktop-mega-menu">Resources <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="nav-direct demo-action" type="button" data-demo-label="Pricing">Pricing</button>
+    </nav>
+    <div class="nav-actions">
+      <button class="action-button demo-action" type="button" data-demo-label="Log in">Log in</button>
+      <button class="action-button primary demo-action" type="button" data-demo-label="Request a demo">Request a demo</button>
+    </div>
+    <button class="mobile-toggle" id="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-drawer" aria-label="Open navigation menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="mega-panel" id="desktop-mega-menu" hidden aria-label="Navigation submenu"></div>
+</header>
+<div class="mobile-backdrop" id="mobile-backdrop" aria-hidden="true"></div>
+<aside class="mobile-drawer" id="mobile-drawer" aria-hidden="true" aria-label="Mobile navigation">
+  <div class="mobile-drawer-head">
+    <p class="mobile-drawer-title">Steel Engine</p>
+    <button class="mobile-close" id="mobile-menu-close" type="button" aria-label="Close navigation menu">×</button>
+  </div>
+  <div class="mobile-scroll">
+    <p class="mobile-demo-note">Navigation prototype. Selections demonstrate the architecture and do not open pages.</p>
+    <div id="mobile-nav-content"></div>
+  </div>
+  <div class="mobile-footer-actions">
+    <button class="action-button demo-action" type="button" data-demo-label="Log in">Log in</button>
+    <button class="action-button primary demo-action" type="button" data-demo-label="Request a demo">Request a demo</button>
+  </div>
+</aside>
+<div class="demo-toast" id="demo-toast" role="status" aria-live="polite" aria-atomic="true"></div>
+<main>
+  <section class="hero">
+    <p class="eyebrow">Steel Engine site architecture</p>
+    <h1>100 pages, organized by folder.</h1>
+    <p class="intro">The positioning-led market architecture for Enterprise AI Production Infrastructure: category, products, solutions, use cases, buyers, industries, and authority.</p>
+  </section>
+  <div class="toolbar">
+    <input id="search" type="search" placeholder="Search pages, routes, families, or H1s" aria-label="Search the page inventory">
+    <span class="count" id="count">100 pages</span>
+  </div>
+  <nav class="folder-index" id="folder-index" aria-label="Page folders"></nav>
+  <div id="folders"></div>
+  <footer>Working architecture • Steel Engine • September 2026</footer>
+</main>
+<script>
+const navMenus = {
+  platform: {
+    label:'Platform', title:'One operating layer for production AI', columns:4,
+    sections:[
+      ['Build',['Chat','Workflows','AI Agents','Subagents','Agent Skills']],
+      ['Knowledge and data',['Research','Docs','Knowledge Bases','Tables and Databases']],
+      ['Deploy',['Apps','Deployments','Hosted Experiences','Scheduled Tasks','Triggers','Steel Engine Mailer']],
+      ['Operate and govern',['Execution and Observability','Workflow Source Control','Organizations and Workspaces','Policy-Based Access Control','Model Choice and BYOK','Self-Hosting']]
+    ],
+    footer:['Integrations','Models','MCP','Frontend Launch Kit','Developers','View all products']
+  },
+  solutions: {
+    label:'Solutions', title:'Move consequential AI work into accountable production', columns:4,
+    sections:[
+      ['Production readiness',['Production AI Operations','AI Workflow Orchestration','AI Observability','Human-in-the-Loop AI']],
+      ['Governance and control',['Agentic Governance','Secure Generative AI','Private AI Infrastructure','Shadow AI Control']],
+      ['Build and scale',['Enterprise Knowledge AI','AI Application Backend','Multi-Agent Operations','AI Cost Governance']],
+      ['By buyer',['Security Leaders','CTO and Platform Leaders','Finance and FinOps Leaders','Legal Privacy and Compliance','Business and Operations Leaders']]
+    ],
+    footer:['Governed Document Processing','Internal Knowledge Assistant','High-Consequence Approvals','AI Portals and Internal Tools','View all use cases']
+  },
+  industries: {
+    label:'Industries', title:'Production readiness where the consequences are real', columns:3,
+    sections:[
+      ['Industries',['Pharma and Healthcare','Energy','Retail','Aviation']],
+      ['Research',['AI Production Readiness Index','Enterprise Benchmark','Index Methodology']],
+      ['Start here',['Enterprise AI Production Readiness Assessment','From AI Pilot to Production','View all industries']]
+    ],
+    footer:[]
+  },
+  resources: {
+    label:'Resources', title:'Guidance for taking AI from pilot to production', columns:4,
+    sections:[
+      ['Start here',['Enterprise AI Production Readiness Assessment','From AI Pilot to Production','Enterprise AI Platform Evaluation Guide']],
+      ['Governance',['Agentic Governance Framework','AI Agent Approval Framework','AI Agent Audit Checklist','Shadow AI Governance Guide']],
+      ['Architecture and operations',['Production AI Architecture','Production AI Observability Guide','Enterprise AI Cost Governance','Model and Infrastructure Control']],
+      ['Research and developers',['AI Production Readiness Index','Enterprise Benchmark','Developers','Documentation','API','SDKs']]
+    ],
+    footer:[]
+  }
+};
+const chevron = '<svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const megaPanel = document.querySelector('#desktop-mega-menu');
+const navTriggers = [...document.querySelectorAll('.nav-trigger')];
+let activeDesktopMenu = null;
+let hoverOpenedDesktopMenu = null;
+let hoverCloseTimer;
+let toastTimer;
+function itemButton(label,className='menu-item') {
+  return `<button class="${className} demo-action" type="button" data-demo-label="${label.replace(/"/g,'&quot;')}">${label}</button>`;
+}
+function desktopMenuHTML(menu) {
+  const sections = menu.sections.map(([heading,items]) => `<section class="mega-section"><h3 class="mega-section-title">${heading}</h3>${items.map(item=>itemButton(item)).join('')}</section>`).join('');
+  const footer = menu.footer.length ? `<div class="mega-footer"><span class="mega-footer-label">Explore</span>${menu.footer.map(item=>itemButton(item)).join('')}</div>` : '';
+  return `<div class="mega-header"><div><p class="mega-kicker">${menu.label}</p><h2 class="mega-title">${menu.title}</h2></div><p class="mega-note">Architecture preview — selections do not navigate.</p></div><div class="mega-grid" style="--menu-columns:${menu.columns}">${sections}</div>${footer}`;
+}
+function closeDesktopMenu(returnFocus=false) {
+  if (!activeDesktopMenu) return;
+  const trigger = document.querySelector(`.nav-trigger[data-menu="${activeDesktopMenu}"]`);
+  navTriggers.forEach(button=>button.setAttribute('aria-expanded','false'));
+  megaPanel.hidden = true;
+  activeDesktopMenu = null;
+  hoverOpenedDesktopMenu = null;
+  if (returnFocus && trigger) trigger.focus();
+}
+function openDesktopMenu(key,focusFirst=false) {
+  clearTimeout(hoverCloseTimer);
+  activeDesktopMenu = key;
+  navTriggers.forEach(button=>button.setAttribute('aria-expanded',String(button.dataset.menu===key)));
+  megaPanel.innerHTML = desktopMenuHTML(navMenus[key]);
+  megaPanel.hidden = false;
+  bindDemoActions(megaPanel);
+  if (focusFirst) megaPanel.querySelector('.menu-item')?.focus();
+}
+navTriggers.forEach(trigger=>{
+  trigger.addEventListener('click',()=>{
+    if (activeDesktopMenu===trigger.dataset.menu && hoverOpenedDesktopMenu===trigger.dataset.menu) {
+      hoverOpenedDesktopMenu=null;
+      return;
+    }
+    if (activeDesktopMenu===trigger.dataset.menu) closeDesktopMenu();
+    else { hoverOpenedDesktopMenu=null; openDesktopMenu(trigger.dataset.menu); }
+  });
+  trigger.addEventListener('pointerenter',()=>{
+    if (matchMedia('(hover:hover) and (min-width:1025px)').matches) {
+      hoverOpenedDesktopMenu=trigger.dataset.menu;
+      openDesktopMenu(trigger.dataset.menu);
+    }
+  });
+  trigger.addEventListener('keydown',event=>{
+    if (event.key==='ArrowDown') { event.preventDefault(); openDesktopMenu(trigger.dataset.menu,true); }
+  });
+});
+document.querySelector('#site-header').addEventListener('pointerleave',()=>{
+  if (activeDesktopMenu) hoverCloseTimer=setTimeout(()=>closeDesktopMenu(),140);
+});
+document.querySelector('#site-header').addEventListener('pointerenter',()=>clearTimeout(hoverCloseTimer));
+document.addEventListener('pointerdown',event=>{
+  if (activeDesktopMenu && !document.querySelector('#site-header').contains(event.target)) closeDesktopMenu();
+});
+
+const mobileNavContent = document.querySelector('#mobile-nav-content');
+mobileNavContent.innerHTML = Object.entries(navMenus).map(([key,menu])=>{
+  const sections=menu.sections.map(([heading,items])=>`<h3 class="mobile-section-title">${heading}</h3>${items.map(item=>itemButton(item,'mobile-menu-item')).join('')}`).join('');
+  const footer=menu.footer.length ? `<h3 class="mobile-section-title">Explore</h3>${menu.footer.map(item=>itemButton(item,'mobile-menu-item')).join('')}` : '';
+  return `<section class="mobile-accordion"><button class="mobile-accordion-trigger" type="button" aria-expanded="false" aria-controls="mobile-panel-${key}">${menu.label}${chevron}</button><div class="mobile-accordion-panel" id="mobile-panel-${key}" hidden>${sections}${footer}</div></section>`;
+}).join('') + `<button class="mobile-direct demo-action" type="button" data-demo-label="Security">Security</button><button class="mobile-direct demo-action" type="button" data-demo-label="Pricing">Pricing</button>`;
+
+document.querySelectorAll('.mobile-accordion-trigger').forEach(trigger=>{
+  trigger.addEventListener('click',()=>{
+    const panel=document.querySelector(`#${trigger.getAttribute('aria-controls')}`);
+    const willOpen=trigger.getAttribute('aria-expanded')!=='true';
+    document.querySelectorAll('.mobile-accordion-trigger').forEach(other=>{
+      other.setAttribute('aria-expanded','false');
+      document.querySelector(`#${other.getAttribute('aria-controls')}`).hidden=true;
+    });
+    trigger.setAttribute('aria-expanded',String(willOpen));
+    panel.hidden=!willOpen;
+  });
+});
+const mobileToggle=document.querySelector('#mobile-menu-toggle');
+const mobileDrawer=document.querySelector('#mobile-drawer');
+const mobileBackdrop=document.querySelector('#mobile-backdrop');
+const mobileClose=document.querySelector('#mobile-menu-close');
+function openMobileMenu() {
+  closeDesktopMenu();
+  document.body.classList.add('menu-open');
+  mobileDrawer.classList.add('is-open');
+  mobileBackdrop.classList.add('is-open');
+  mobileDrawer.setAttribute('aria-hidden','false');
+  mobileToggle.setAttribute('aria-expanded','true');
+  mobileToggle.setAttribute('aria-label','Close navigation menu');
+  mobileClose.focus();
+}
+function closeMobileMenu(returnFocus=true) {
+  document.body.classList.remove('menu-open');
+  mobileDrawer.classList.remove('is-open');
+  mobileBackdrop.classList.remove('is-open');
+  mobileDrawer.setAttribute('aria-hidden','true');
+  mobileToggle.setAttribute('aria-expanded','false');
+  mobileToggle.setAttribute('aria-label','Open navigation menu');
+  if (returnFocus) mobileToggle.focus();
+}
+mobileToggle.addEventListener('click',()=> mobileToggle.getAttribute('aria-expanded')==='true' ? closeMobileMenu() : openMobileMenu());
+mobileClose.addEventListener('click',()=>closeMobileMenu());
+mobileBackdrop.addEventListener('click',()=>closeMobileMenu());
+mobileDrawer.addEventListener('keydown',event=>{
+  if (event.key==='Tab') {
+    const focusable=[...mobileDrawer.querySelectorAll('button:not([disabled])')];
+    const first=focusable[0], last=focusable[focusable.length-1];
+    if (event.shiftKey && document.activeElement===first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement===last) { event.preventDefault(); first.focus(); }
+  }
+});
+document.addEventListener('keydown',event=>{
+  if (event.key==='Escape') {
+    if (mobileDrawer.classList.contains('is-open')) closeMobileMenu();
+    else if (activeDesktopMenu) closeDesktopMenu(true);
+  }
+});
+matchMedia('(min-width:1025px)').addEventListener('change',event=>{ if (event.matches && mobileDrawer.classList.contains('is-open')) closeMobileMenu(false); });
+function showDemoState(label) {
+  const toast=document.querySelector('#demo-toast');
+  toast.textContent=`${label} selected — navigation prototype only.`;
+  toast.classList.add('is-visible');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>toast.classList.remove('is-visible'),2600);
+}
+function bindDemoActions(root=document) {
+  root.querySelectorAll('.demo-action:not([data-demo-bound])').forEach(button=>{
+    button.dataset.demoBound='true';
+    button.addEventListener('click',()=>{
+      showDemoState(button.dataset.demoLabel || button.textContent.trim());
+      if (button.closest('.mobile-drawer')) closeMobileMenu(false);
+      else if (button.closest('.mega-panel')) closeDesktopMenu();
+    });
+  });
+}
+bindDemoActions();
+
+const pages = [
+["Core","Home","/","Enterprise AI production infrastructure"],
+["Core","Platform Overview","/platform","Built for production from day one"],
+["Core","Products Overview","/products","Every surface for governed AI in production"],
+["Core","Solutions Overview","/solutions","Resolve the decisions that keep AI trapped in pilot"],
+["Core","Use Cases Overview","/use-cases","Put consequential AI work into accountable production"],
+["Core","Industries Overview","/industries","Put AI into production where getting it wrong has real consequences"],
+["Core","Teams Overview","/teams","Give every enterprise stakeholder a system they can stand behind"],
+["Core","Developer Overview","/developers","Build on Steel Engine without rebuilding the production operating layer"],
+["Core","Enterprise","/enterprise","Governed, observable, accountable from the first deployment"],
+["Core","Security","/security","Protect every identity, credential, workflow, and agent action"],
+["Core","Pricing","/pricing","Choose the production path that fits your organization"],
+["Core","Integrations","/integrations","Connect agents to the systems production work depends on"],
+["Core","Models","/models","Choose the right model without surrendering operating control"],
+["Locked product","Chat","/products/chat","Move from an open question to coordinated action"],
+["Locked product","Workflows","/products/workflows","Turn repeatable work into a governed production system"],
+["Locked product","AI Agents","/products/ai-agents","Delegate complex work without surrendering control"],
+["Locked product","Subagents","/products/subagents","Coordinate specialized agents and inspect every result"],
+["Locked product","Agent Skills","/products/agent-skills","Give every agent reusable expertise for the work at hand"],
+["Locked product","Research","/products/research","Turn a question into sourced, decision-ready intelligence"],
+["Locked product","Docs","/products/docs","Write, organize, and share human-readable knowledge"],
+["Locked product","Knowledge Bases","/products/knowledge-bases","Ground AI answers in the documents your business trusts"],
+["Locked product","Tables and Databases","/products/tables-databases","Give agents structured records they can safely use and update"],
+["Locked product","Apps","/products/apps","Build multi-page tools on deployed Steel Engine workflows"],
+["Locked product","Scheduled Tasks","/products/scheduled-tasks","Repeat adaptive AI work on the schedule you choose"],
+["Locked product","Triggers","/products/triggers","Start the right production workflow the moment work arrives"],
+["Locked product","Hosted Experiences","/products/hosted-experiences","Put one deployed workflow behind a focused chat or form"],
+["Locked product","Execution and Observability","/products/execution-observability","See every run, decision, error, token, and cost"],
+["Locked product","Steel Engine Mailer","/products/mailer","Email work to your workspace and let Steel Engine handle it"],
+["Locked product","Workflow Source Control","/products/workflow-source-control","Protect, review, merge, and deliberately deploy workflow changes"],
+["Locked product","Organizations and Workspaces","/products/organizations-workspaces","Organize every team, system, and deployment boundary"],
+["Locked product","Policy-Based Access Control","/products/access-control","Give every person, group, and key exactly the authority it needs"],
+["Locked product","Model Choice and BYOK","/products/model-choice","Choose hosted, bring-your-own-key, or local models for the job"],
+["Locked product","Self-Hosting","/products/self-hosting","Run Steel Engine on infrastructure your organization controls"],
+["Locked product","Model Context Protocol","/products/mcp","Use and expose governed tools through MCP"],
+["Locked product","Frontend Launch Kit","/products/frontend-launch-kit","Build a Next.js front end on a governed workflow backend"],
+["Locked product","Deployments","/products/deployments","Deploy one workflow across chat, API, schedule, webhook, and MCP"],
+["Strategic solution","Production AI Operations","/solutions/production-ai-operations","Move AI from working pilot to accountable production"],
+["Strategic solution","Agentic Governance","/solutions/agentic-governance","Control what every agent can access, decide, and change"],
+["Strategic solution","AI Workflow Orchestration","/solutions/ai-workflow-orchestration","Put adaptive reasoning inside a repeatable production process"],
+["Strategic solution","AI Observability","/solutions/ai-observability","Reconstruct every agent run from input to outcome and cost"],
+["Strategic solution","Human-in-the-Loop AI","/solutions/human-in-the-loop-ai","Automate the work without automating away judgment"],
+["Strategic solution","Secure Generative AI","/solutions/secure-generative-ai","Use generative AI with bounded access, models, and data"],
+["Strategic solution","Private AI Infrastructure","/solutions/private-ai-infrastructure","Keep AI infrastructure, models, and data under your control"],
+["Strategic solution","Enterprise Knowledge AI","/solutions/enterprise-knowledge-ai","Turn company knowledge into trusted context for production AI"],
+["Strategic solution","AI Application Backend","/solutions/ai-application-backend","Give every AI product a versioned, observable backend"],
+["Strategic solution","Multi-Agent Operations","/solutions/multi-agent-operations","Coordinate specialized agents without losing accountability"],
+["Strategic solution","AI Cost Governance","/solutions/ai-cost-governance","Connect every AI run to the cost decisions behind it"],
+["Strategic solution","Shadow AI Control","/solutions/shadow-ai-control","Move unsanctioned agents into a governed production path"],
+["Use-case candidate","Governed Document Processing","/use-cases/governed-document-processing","Move documents from intake to structured, reviewed action"],
+["Use-case candidate","Email and Case Triage","/use-cases/email-case-triage","Turn incoming messages into classified, routed work"],
+["Use-case candidate","Internal Knowledge Assistant","/use-cases/internal-knowledge-assistant","Give employees answers grounded in approved company sources"],
+["Use-case candidate","Research and Intelligence","/use-cases/research-intelligence","Turn scattered sources into evidence your team can act on"],
+["Use-case candidate","Compliance Evidence Collection","/use-cases/compliance-evidence-collection","Gather defensible evidence without the last-minute scramble"],
+["Use-case candidate","Incident Investigation and Response","/use-cases/incident-response","Bring context, coordination, and accountable action to every incident"],
+["Use-case candidate","Human-Reviewed Customer Operations","/use-cases/customer-operations","Resolve customer work while preserving the right human decision"],
+["Use-case candidate","Scheduled Intelligence and Reporting","/use-cases/scheduled-intelligence-reporting","Keep recurring analysis and reporting running under control"],
+["Use-case candidate","API Orchestration","/use-cases/api-orchestration","Turn disconnected services into one observable operation"],
+["Use-case candidate","AI Portals and Internal Tools","/use-cases/ai-portals-internal-tools","Put governed workflows behind an interface people can use"],
+["Use-case candidate","High-Consequence Approvals","/use-cases/high-consequence-approvals","Pause consequential actions until the right person decides"],
+["Use-case candidate","Knowledge Synchronization","/use-cases/knowledge-synchronization","Keep production AI context current as source material changes"],
+["Use-case candidate","Policy and Procedure Answers","/use-cases/policy-procedure-answers","Turn complex internal policies into grounded, usable answers"],
+["Use-case candidate","Content Review and Publishing","/use-cases/content-review-publishing","Move content from creation through accountable review to publication"],
+["Use-case candidate","Data Processing and Reporting","/use-cases/data-processing-reporting","Turn recurring data work into dependable operational reports"],
+["Proof required","Pharma and Healthcare","/industries/pharma-healthcare","Move AI into regulated health operations with accountability intact"],
+["Proof required","Energy","/industries/energy","Bring governed AI into consequential energy operations"],
+["Proof required","Retail","/industries/retail","Run high-volume AI operations without losing visibility or control"],
+["Proof required","Aviation","/industries/aviation","Keep human judgment and traceability inside AI-assisted operations"],
+["Buyer page","Security Leaders","/teams/security","Put every agent inside enforceable boundaries"],
+["Buyer page","Finance and FinOps Leaders","/teams/finance-finops","Know what production AI costs before it compounds"],
+["Buyer page","CTO and Platform Leaders","/teams/technology-platform","Build AI infrastructure you will not have to rebuild"],
+["Buyer page","Legal Privacy and Compliance","/teams/legal-privacy-compliance","Make every consequential AI action explainable and defensible"],
+["Buyer page","Business and Operations Leaders","/teams/business-operations","Put AI into production without turning operations into an experiment"],
+["Developer page","API","/developers/api","Run and manage deployed workflows from any application"],
+["Developer page","Steel Engine MCP Server","/developers/steel-engine-mcp","Operate Steel Engine from external AI clients through MCP"],
+["Developer page","Workflow MCP Deployment","/developers/workflow-mcp-deployment","Turn governed workflows into tools other AI clients can call"],
+["Developer page","SDKs","/developers/sdks","Build Steel Engine into TypeScript and Python applications"],
+["Developer page","Frontend Launch Kit","/developers/frontend-launch-kit","Move from deployed workflow to production interface faster"],
+["Developer page","Custom Tools and Integrations","/developers/custom-integrations","Connect any API or service your production workflow needs"],
+["Developer page","Agent-to-Agent Integration","/developers/a2a","Connect Steel Engine workflows to agent-to-agent systems"],
+["Category resource","Enterprise AI Production Readiness Assessment","/resources/enterprise-ai-production-readiness-assessment","Find what stands between your AI pilot and production"],
+["Category resource","From AI Pilot to Production","/resources/ai-pilot-to-production","Move from a successful demonstration to an operable production system"],
+["Category resource","Agentic Governance Framework","/resources/agentic-governance-framework","Define how agents receive authority and remain accountable"],
+["Category resource","AI Agent Approval Framework","/resources/ai-agent-approval-framework","Decide where agents must stop and people must judge"],
+["Category resource","Production AI Observability Guide","/resources/production-ai-observability","Know what evidence every production agent should leave behind"],
+["Category resource","Shadow AI Governance Guide","/resources/shadow-ai-governance","Replace invisible agent activity with a governed production path"],
+["Category resource","Enterprise AI Cost Governance","/resources/enterprise-ai-cost-governance","Connect AI usage, models, workflows, and ownership to cost"],
+["Category resource","Production AI Architecture","/resources/production-ai-architecture","Design one governed system across every deployment surface"],
+["Category resource","AI Agent Audit Checklist","/resources/ai-agent-audit-checklist","Test whether an agent can be explained after it acts"],
+["Category resource","Model and Infrastructure Control","/resources/model-infrastructure-control","Keep control as models, providers, and deployment needs change"],
+["Category resource","Enterprise AI Platform Evaluation Guide","/resources/enterprise-ai-platform-evaluation","Evaluate AI platforms on production readiness instead of demo speed"],
+["Category resource","Policy-Based Access Control Guide","/resources/policy-based-access-control","Design agent authority from roles, permissions, assignments, and scope"],
+["Category resource","MCP Production Readiness Guide","/resources/mcp-production-readiness","Prepare governed MCP tools for real production clients"],
+["Category resource","Workflow Source Control Guide","/resources/workflow-source-control","Bring branch, review, merge, and deploy discipline to AI workflows"],
+["Planned research","AI Production Readiness Index","/research/ai-production-readiness-index","See how enterprises are closing the gap between AI pilots and production"],
+["Planned research","Enterprise Benchmark","/research/enterprise-ai-production-benchmark","Benchmark your production readiness against enterprise peers"],
+["Planned research","Pharma and Healthcare Index","/research/production-readiness-pharma-healthcare","Measure the pilot-to-production gap in pharma and healthcare"],
+["Planned research","Energy Index","/research/production-readiness-energy","Measure the pilot-to-production gap across energy operations"],
+["Planned research","Retail Index","/research/production-readiness-retail","Measure the pilot-to-production gap across retail operations"],
+["Planned research","Aviation Index","/research/production-readiness-aviation","Measure the pilot-to-production gap across aviation operations"],
+["Planned research","Index Methodology","/research/ai-production-readiness-methodology","See how the AI Production Readiness Index is built and scored"]
+];
+const count = document.querySelector('#count');
+const folders = document.querySelector('#folders');
+const folderIndex = document.querySelector('#folder-index');
+const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const folderFor = route => {
+  if (route === '/' || !route.slice(1).includes('/')) return 'Top-level pages';
+  return `/${route.split('/')[1]}`;
+};
+const folderOrder = ['Top-level pages','/products','/solutions','/use-cases','/industries','/teams','/developers','/resources','/research'];
+const slug = name => name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+function render(query='') {
+  const q=query.trim().toLowerCase();
+  const visible=pages.map((p,i)=>({p,i})).filter(({p})=>!q||p.join(' ').toLowerCase().includes(q));
+  const grouped = new Map();
+  visible.forEach(item => {
+    const folder = folderFor(item.p[2]);
+    if (!grouped.has(folder)) grouped.set(folder, []);
+    grouped.get(folder).push(item);
+  });
+  const ordered = [...grouped.keys()].sort((a,b) => {
+    const ai=folderOrder.indexOf(a), bi=folderOrder.indexOf(b);
+    return (ai<0?999:ai)-(bi<0?999:bi) || a.localeCompare(b);
+  });
+  folderIndex.innerHTML = ordered.map(folder => `<a class="folder-link" href="#${slug(folder)}">${esc(folder)} · ${grouped.get(folder).length}</a>`).join('');
+  folders.innerHTML = ordered.map(folder => {
+    const items=grouped.get(folder);
+    const rows=items.map(({p,i})=>`<tr><td class="num">${i+1}</td><td class="status"><span class="tag">${esc(p[0])}</span></td><td class="designation">${esc(p[1])}</td><td class="route"><code>${esc(p[2])}</code></td><td class="h1dir">${esc(p[3])}</td></tr>`).join('');
+    return `<section class="folder" id="${slug(folder)}"><div class="folder-heading"><h2>${esc(folder)}</h2><span class="folder-total">${items.length} ${items.length===1?'page':'pages'}</span></div><div class="table-wrap"><table><thead><tr><th>#</th><th>Status</th><th>Designation</th><th>Route</th><th>Working H1 direction</th></tr></thead><tbody>${rows}</tbody></table></div></section>`;
+  }).join('');
+  count.textContent=`${visible.length} ${visible.length===1?'page':'pages'}`;
+}
+document.querySelector('#search').addEventListener('input', e=>render(e.target.value));
+render();
+</script>
+</body>
+</html>
